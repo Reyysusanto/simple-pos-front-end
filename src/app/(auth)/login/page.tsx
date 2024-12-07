@@ -15,7 +15,7 @@ import {
 } from "@/components/ui/form";
 import Button from "@/app/component/Element/Button";
 import { useRouter } from "next/navigation";
-import { LoginSchema } from "../../schemas";
+import { LoginSchema } from "../../../../schemas";
 
 
 interface User {
@@ -24,7 +24,7 @@ interface User {
   [key: string]: unknown;
 }
 
-const Page = () => {
+const LoginPage = () => {
   const Router = useRouter();
   const [user, setUser] = useState<User[]>([]);
   const form = useForm<z.infer<typeof LoginSchema>>({
@@ -126,4 +126,4 @@ const Page = () => {
     </div>
   );
 };
-export default Page;
+export default LoginPage;
