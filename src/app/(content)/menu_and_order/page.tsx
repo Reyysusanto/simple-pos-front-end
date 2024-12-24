@@ -82,13 +82,6 @@ const Order = () => {
   const [userName, setUserName] = useState("");
   const [notes, setNotes] = useState<Record<number, string>>({});
 
-  const currentDate = new Date();
-  const formatDate = currentDate.toLocaleDateString("id-ID", {
-    weekday: "long",
-    year: "numeric",
-    month: "long",
-    day: "numeric",
-  });
 
   useEffect(() => {
     const fetchUser = async () => {
@@ -148,12 +141,6 @@ const Order = () => {
     <div className="flex">
       <div className="w-full md:w-2/3 p-6">
         <div className="flex justify-between items-center">
-          <div className="w-1/2">
-            <h1 className="text-2xl font-bold">
-              de <span className="text-green-500">Authentic</span>
-            </h1>
-            <p className="text-gray-600">{formatDate}</p>
-          </div>
           <div className="w-1/2 relative md:w-1/3">
             <FaSearch className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
             <Input
@@ -238,10 +225,10 @@ const Order = () => {
                         />
                         <div>
                           <h5 className="font-semibold text-base text-green-600">
-                            {product?.name}
+                            {product.name}
                           </h5>
                           <p className="text-gray-600 font-lightm text-sm">
-                            {product?.price.toLocaleString("en-US", {
+                            {product.price.toLocaleString("en-US", {
                               style: "currency",
                               currency: "USD",
                             })}

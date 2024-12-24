@@ -1,44 +1,69 @@
-"use client"
+"use client";
 
 import * as z from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import { AuthFooter, AuthHeader } from '@/app/component/Auth/Auth';
-import React from 'react'
-import { Form, FormItem, FormField, FormLabel, FormControl, FormMessage } from "@/components/ui/form";
-import { LoginSchema } from "../../../../schemas";
+import { AuthFooter, AuthHeader } from "@/app/component/Auth/Auth";
+import React, { useEffect, useState } from "react";
+import {
+  Form,
+  FormItem,
+  FormField,
+  FormLabel,
+  FormControl,
+  FormMessage,
+} from "@/components/ui/form";
 import Button from "@/app/component/Element/Button";
 import { useRouter } from "next/navigation";
+import { LoginSchema } from "@/lib/schema";
 
+
+interface User {
+  email: string;
+  password: string;
+  [key: string]: unknown;
+}
 
 const SignUpPage = () => {
   const Router = useRouter();
-  const form = useForm<z.infer<typeof LoginSchema>>(
-    {
-      resolver: zodResolver(LoginSchema),
-      defaultValues: {
-        email: "",
-        password: "",
-      },
+  const [user, setUser] = useState<User[]>([]);
+  const form = useForm<z.infer<typeof LoginSchema>>({
+    resolver: zodResolver(LoginSchema),
+    defaultValues: {
+      email: "",
+      password: "",
+    },
+  });  
+
+  useEffect(() => {
+    const fetchUser = async () => {
+      try {
+        const response = await fetch("https://fakestoreapi.com/users");
+        if (!response.ok) throw new Error("Failed to fetch data");
+        const data = await response.json();
+        setUser(data);
+      } catch(error) {
+        console.error(error);
+      }
     }
-  )
+    fetchUser();
+  }, [])
 
   const onSubmit = (data: z.infer<typeof LoginSchema>) => {
-    console.log(data);
-  }
+    console.log(data)
+    Router.push("/menu_and_order");
+  };
 
   return (
-    <div className='flex flex-col bg-white h-screen px-20 items-center justify-center'>
+    console.log(user),
+    <div className="flex flex-col bg-white h-screen px-20 items-center justify-center">
       <div className="flex flex-col bg-background px-9 py-8 rounded-xl border-2 border-gray-200 gap-y-4">
         <AuthHeader
           titleCard="Sign Up"
-          description="Regist your account to start ordering"
+          description="Regist your account here"
         />
         <Form {...form}>
-          <form
-            onSubmit={form.handleSubmit(onSubmit)}
-            className="space-y-6"
-          >
+          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
             <div className="space-y-4">
               <FormField
                 control={form.control}
@@ -81,19 +106,17 @@ const SignUpPage = () => {
               type="submit"
               customClass="text-white bg-green-500 hover:bg-green-600 border-2 border-green-500 w-full"
               buttonName="Sign Up"
-              click={() => {
-                Router.push('/menu_and_order')}}
             />
           </form>
         </Form>
         <AuthFooter
-          Description="Already have an account?" 
-          NavigateTo="signup"
+          Description="Already Have an Account?"
+          NavigateTo="Sign Up"
           LinkTo="Login"
           linkToNavigate="login"
         />
       </div>
     </div>
   );
-}
+};
 export default SignUpPage;

@@ -15,7 +15,7 @@ import {
 } from "@/components/ui/form";
 import Button from "@/app/component/Element/Button";
 import { useRouter } from "next/navigation";
-import { LoginSchema } from "../../schemas";
+import { LoginSchema } from "../lib/schema";
 
 
 interface User {

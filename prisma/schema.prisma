@@ -1,0 +1,145 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+enum RoleUser {
+  admin
+  customer
+}
+
+model User {
+  id       Int      @id @default(autoincrement())
+  name     String
+  email    String   @unique
+  password String
+  type     RoleUser @default(customer)
+
+  orders   Order[]
+  sessions Session[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Session {
+  id        String   @id
+  userId    Int
+  expiresAt DateTime
+  user      User     @relation(references: [id], fields: [userId], onDelete: Cascade)
+}
+
+model Brand {
+  id   Int     @id @default(autoincrement())
+  name String
+  logo String?
+
+  products Product[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Category {
+  id   Int    @id @default(autoincrement())
+  name String
+
+  products Product[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Location {
+  id   Int    @id @default(autoincrement())
+  name String
+
+  products Product[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+enum StockProduct {
+  ready
+  preorder
+}
+
+enum ProductStock {
+  ready
+  preorder
+}
+
+model Product {
+  id          Int          @id @default(autoincrement())
+  brandId     Int
+  brand       Brand        @relation(fields: [brandId], references: [id])
+  categoryId  Int
+  category    Category     @relation(fields: [categoryId], references: [id])
+  locationId  Int
+  location    Location     @relation(fields: [locationId], references: [id])
+  name        String
+  description String
+  price       BigInt
+  stock       ProductStock
+  images      String[]
+
+  orderProducts OrderProduct[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+enum StatusOrder {
+  pending
+  success
+  failed
+}
+
+model Order {
+  id     Int         @id @default(autoincrement())
+  code   String      @unique
+  userId Int
+  user   User        @relation(fields: [userId], references: [id])
+  total  BigInt
+  status StatusOrder @default(pending)
+
+  detail   OrderDetail?
+  products OrderProduct[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model OrderDetail {
+  id         Int     @id @default(autoincrement())
+  orderId    Int     @unique
+  order      Order   @relation(fields: [orderId], references: [id])
+  name       String
+  phone      String
+  address    String
+  city       String
+  postalCode String
+  notes      String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model OrderProduct {
+  id        Int     @id @default(autoincrement())
+  productId Int
+  product   Product @relation(fields: [productId], references: [id])
+  orderId   Int
+  order     Order   @relation(fields: [orderId], references: [id])
+  quantity  Int
+  subtotal  BigInt
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
